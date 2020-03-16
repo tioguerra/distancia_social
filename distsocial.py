@@ -16,6 +16,7 @@ GRAPH_SICK_COLOR = 255,0,0
 GRAPH_CURED_COLOR = 0,255,0
 GRAPH_DEAD_COLOR = 0,0,0
 GRAPH_HEALTHY_COLOR = 255,204,0
+GRAPH_UTI_CAPACITY = 0, 0, 255
 
 # Chance of dying from the disease
 DIE_CHANCE = 0.05
@@ -31,11 +32,20 @@ VELOCITY = 2.0
 # (this tells how many people will be stationary,
 #  for instance, 0.7 means 70% will not move)
 #SOCIAL_DISTANCING = 0.0
-SOCIAL_DISTANCING = 0.5
+SOCIAL_DISTANCING = 0.8
 SOCIAL_DISTANCING_MASS = 1000.0
 
 # Size of the population
 POPULATION = 100
+
+# Size of population Brasil and number of UTI
+POPULATION_BRAZIL = 209e6
+LEITOS_UTI_BRAZIL = 25e3
+
+# Percentage of people who have to go to UTI (data of China cases)
+PERCENTAGE_GO_UTI = 0.05
+
+UTI_POPULATION_PERCENTAGE = POPULATION*(LEITOS_UTI_BRAZIL/(POPULATION_BRAZIL*PERCENTAGE_GO_UTI))
 
 class Person():
     ''' Class to hold a person status, position and velocity
@@ -55,7 +65,7 @@ class Sim():
     ''' This is the simulation class. Most of the code
         is in here
     '''
-    def __init__(self,pop=POPULATION,w=1000,h=600,g=400,r=13):
+    def __init__(self,pop=POPULATION,w=1000,h=400,g=300,r=13):
         # Simulation Parameters
         self.width = w
         self.height = h
@@ -175,6 +185,9 @@ class Sim():
                          (counter, self.height + dead))
         pygame.draw.line(self.screen,GRAPH_HEALTHY_COLOR,(counter,self.height + self.graph - sick),\
                          (counter, self.height + dead + cured))
+        pygame.draw.line(self.screen, GRAPH_UTI_CAPACITY,\
+                         (counter, self.height + self.graph*(1-UTI_POPULATION_PERCENTAGE)),\
+                         (counter, self.height + self.graph*(1-UTI_POPULATION_PERCENTAGE)))
 
     def update(self):
         # Main function to update all the positions and "infect" people
